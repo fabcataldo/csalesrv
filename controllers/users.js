@@ -6,6 +6,17 @@ var Ticket = require('../models/tickets');
 var Comment = require('../models/comments');
 var Role = require('../models/roles');
 
+function makeRandomString(length) {
+	var result = '';
+	var characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+	var charactersLength = characters.length;
+	for ( var i = 0; i < length; i++ ) {
+		result += characters.charAt(Math.floor(Math.random() * charactersLength));
+	}
+	return result;
+}
+
+
 function recUser(user, res){
 	user.save((err, userStored) => {
 		if (err) {
@@ -18,13 +29,28 @@ function recUser(user, res){
 					user: userStored,
 					token: jwt.createToken(user)
 				});
-				
 			}
 		}
 	});	
 }
 
-function saveUser(req, res){
+function recClientUser(user, res){
+	Role.findOne({ name: 'cliente' }).populate({ path: 'privileges' }).exec((err, role) => {
+		if (err) {
+			res.status(500).send('Error en la petición get Role');
+		} else {
+			if (!role) {
+				res.status(404).send('El rol no existe.');
+			} else {
+				user.role = role;
+				recUser(user, res);
+			}
+		}
+	});
+}
+
+
+async function saveUser(req, res){
 	var user = new User();
 	var params = req.body;	
 
@@ -46,39 +72,37 @@ function saveUser(req, res){
 			}
 			else{
 				if(!userResult){
-					if (!user.role){
-						Role.findOne({ name: 'cliente' }).populate({ path: 'privileges' }).exec((err, role) => {
-							if (err) {
-								res.status(500).send('Error en la petición get Role');
-								return err;
-							} else {
-								if (!role) {
-									res.status(404).send('El rol no existe.');
-									return err;
-								} else {
-									user.role = role;
-								}
-							}
-						});
-					}
 					if (user.password) {
 						bcrypt.hash(user.password, null, null, function (err, hash) {
 							user.password = hash;
 						})
-						recUser(user,res)
 					}
 					else {
 						if (!user.loggedWithOAuth2) {
 							res.status(400).send({ message: 'Introduce la contraseña' });
 						}
 						else {
-							bcrypt.hash(user.email, null, null, function (err, hash) {
+							bcrypt.hash(makeRandomString(user.email.length), null, null, function (err, hash) {
 								user.password = hash;
-							})
-							recUser(user,res)
+							})					
 						}
 					}
-
+					if (!user.role){
+						Role.findOne({ name: 'cliente' }).populate({ path: 'privileges' }).exec((err, role) => {
+							if (err) {
+								res.status(500).send('Error en la petición get Role');
+							} else {
+								if (!role) {
+									res.status(404).send('El rol no existe.');
+								} else {
+									recClientUser(user, res);
+								}
+							}
+						});
+					}
+					else{
+						recUser(user,res);
+					}
 				}
 				else{
 					res.status(200).send({user: userResult, 
