@@ -125,7 +125,7 @@ function loginUser(req, res){
 			res.status(500).send({message: 'Error en la petición login user'});
 		}else{
 			if(!user){
-				res.status(404).send({message: 'El usuario no existe'});
+				res.status(404).send({message: 'El usuario no existe o es una cuenta de Google o Facebook.'});
 			}else{
 				// Comprobar la contraseña
 				bcrypt.compare(password, user.password, function(err, check){
