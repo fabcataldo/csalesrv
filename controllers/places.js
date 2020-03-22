@@ -67,7 +67,7 @@ function getPlaces(req, res){
 			if(!places){
 				res.status(404).send({message: 'No hay lugares!'});
 			}else{
-				res.status(200).send({places});
+				res.status(200).send(places);
 			}
 		}
 	});
