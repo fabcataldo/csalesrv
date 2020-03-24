@@ -6,6 +6,7 @@ var Ticket = require('../models/tickets');
 var Comment = require('../models/comments');
 var Role = require('../models/roles');
 
+
 function makeRandomString(length) {
 	var result = '';
 	var characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
@@ -178,14 +179,31 @@ function updateUser(req,res){
 	var userId = req.params.id;
 	var userToUpdate = req.body;
 
+	var previousUserPwd = userToUpdate.password;
+	if(previousUserPwd.charAt(0)!=='$'){
+		userToUpdate.password = bcrypt.hashSync(userToUpdate.password, null)
+	}
+
 	User.findByIdAndUpdate(userId, userToUpdate, (err, userUpdated) => {
 		if(err){
+			console.log(err);
 			res.status(500).send({message: 'Error al actualizar el usuario'});
 		}else{
 			if(!userUpdated){
 				res.status(404).send({message: 'No se ha podido actualizar el usuario'});
 			}else{
-				res.status(200). send({user: userUpdated});
+				if(previousUserPwd.charAt(0)!=='$'){
+					res.status(200).send({
+						user: userToUpdate,
+						token: jwt.createToken(userToUpdate)
+					});
+				}
+				else{
+					res.status(200).send({
+						user: userToUpdate
+					});
+				}
+				
 			}
 		}
 	});
@@ -198,7 +216,7 @@ function deleteUser(req,res){
 		if(err){
 			res.status(500).send({message: 'Error en eliminar los tickets del usuario con id:'+userId});
 		}else{
-			if(!users){
+			if(!res){
 				res.status(404).send({message: 'No hay tickets asociados alusuario con id:'+userId});
 			}else{
 				res.status(200).send({status: 'OK'});
