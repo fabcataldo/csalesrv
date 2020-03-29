@@ -10,6 +10,6 @@ api.get('/tickets/:id', md_auth.ensureAuth, TicketsController.getTicket);
 api.put('/tickets/:id', md_auth.ensureAuth, TicketsController.updateTicket);
 api.get('/tickets', md_auth.ensureAuth, TicketsController.getTickets);
 api.delete('/tickets/:id', md_auth.ensureAuth, TicketsController.deleteTicket);
-
+api.get('/tickets/:user', md_auth.ensureAuth, TicketsController.getUserTickets);
 
 module.exports = api;

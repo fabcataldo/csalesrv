@@ -31,6 +31,27 @@ function getTicket(req, res) {
 	});
 }
 
+function getUserTickets(req, res){
+	Ticket.find({user: req.params.user})
+	.populate({
+		path: 'products',
+		populate: {
+			path: 'place'
+		}
+	})
+	.exec((err, tickets) => {
+		if (err) {
+			res.status(500).send({ message: 'Error en la petición' });
+		} else {
+			if (!tickets) {
+				res.status(404).send({ message: 'No hay tickets cargados' });
+			} else {
+				res.status(200).send(tickets);
+			}
+		}
+	});
+}
+
 function getTickets(req, res) {
 	Ticket.find({})
 	.populate({
@@ -60,7 +81,7 @@ function getTickets(req, res) {
 				if (!tickets) {
 					res.status(404).send({ message: 'No hay tickets cargados' });
 				} else {
-					res.status(200).send({ tickets });
+					res.status(200).send(tickets);
 				}
 			}
 		});
@@ -76,11 +97,13 @@ function saveTicket(req, res) {
 		ticket.payment_methods.push(params.payment_methods[i])
 	}
 
-	ticket.products=params.products;
-	ticket.place=params.place;
+	ticket.products = params.products;
+	ticket.place = params.place;
+	ticket.total = params.total;
 
 	ticket.save((err, ticketStored) => {
 		if (err) {
+			console.log(err);
 			res.status(500).send({ message: 'Error en el servidor' });
 		} else {
 			if (!ticketStored) {
@@ -99,12 +122,13 @@ function updateTicket(req, res) {
 
 	Ticket.findByIdAndUpdate(ticketId, ticketToUpdate, (err, ticketUpdated) => {
 		if (err) {
+			console.log(err);
 			res.status(500).send({ message: 'Error al actualizar el ticket' });
 		} else {
 			if (!ticketUpdated) {
 				res.status(404).send({ message: 'No se ha podido actualizar el ticket' });
 			} else {
-				res.status(200).send({ automaticFunction: ticketUpdated });
+				res.status(200).send(ticketUpdated);
 			}
 		}
 	});
@@ -127,5 +151,6 @@ module.exports = {
 	getTickets,
 	updateTicket,
 	saveTicket,
-	deleteTicket
+	deleteTicket,
+	getUserTickets
 };
