@@ -7,9 +7,7 @@ function saveProduct(req, res){
 	var product = new Product();
     product.description = params.description;
 	product.price = params.price;
-	product.place = params.place;
-	product.valid_date_from = params.valid_date_from;
-	product.valid_date_to = params.valid_date_to;
+	product.quantity = params.quantity;
 
 	product.save((err, productStored) => {
 		if(err){
@@ -27,7 +25,7 @@ function saveProduct(req, res){
 function getProduct(req, res){
 	var productId = req.params.id;
 
-	Product.findById(productId).populate({path:'place'}).exec((err, product)=>{
+	Product.findById(productId).exec((err, product)=>{
 		if(err){
 			res.status(500).send({message: 'Error en la petición'});
 		}else{
@@ -41,7 +39,7 @@ function getProduct(req, res){
 }
 
 function getProducts(req, res){
-	Product.find({}).populate({path:'place'}).exec((err, products) => {
+	Product.find({}).exec((err, products) => {
 		if(err){
 			res.status(500).send({message: 'Error en la petición'});
 		}else{
