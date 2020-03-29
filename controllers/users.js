@@ -217,9 +217,11 @@ function deleteUser(req,res){
 			res.status(500).send({message: 'Error en eliminar los tickets del usuario con id:'+userId});
 		}else{
 			if(!res){
-				res.status(404).send({message: 'No hay tickets asociados alusuario con id:'+userId});
+				//res.status(404).send({message: 'No hay tickets asociados alusuario con id:'+userId});
+				console.log('No hay tickets asociados alusuario con id:'+userId);
 			}else{
-				res.status(200).send({status: 'OK'});
+				//res.status(200).send({status: 'OK'});
+				console.log('Borrado de tickets del usuario '+userId+' OK');
 			}
 		}	
 	});
@@ -229,9 +231,11 @@ function deleteUser(req,res){
 			res.status(500).send({message: 'Error en eliminar los comentarios del usuario con id:'+userId});
 		}else{
 			if(!res){
-				res.status(404).send({message: 'No hay comentarios asociados al usuario con id:'+userId});
+				//res.status(404).send({message: 'No hay comentarios asociados al usuario con id:'+userId});
+				console.log('No hay comentarios asociados al usuario con id:'+userId);
 			}else{
-				res.status(200).send({status: 'OK'});
+				console.log('Borrado de comentarios del usuario '+userId+' OK.');
+				//res.status(200).send({status: 'OK'});
 			}
 		}	
 	});
