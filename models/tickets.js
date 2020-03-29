@@ -9,7 +9,8 @@ var TicketsSchema = Schema({
 	products: [{type: Schema.ObjectId, ref:'Products'}],
 	payment_methods: [PaymentMethods],
 	valid_date_from: {type: Date, default: Date.now},
-	valid_date_to: {type: Date, default: Date.now}
+	valid_date_to: {type: Date, default: Date.now},
+	total: Number
 });
 
 module.exports = mongoose.model('Tickets', TicketsSchema)
