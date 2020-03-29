@@ -1,7 +1,4 @@
-var mongoose = require('mongoose');
-var Schema = mongoose.Schema;
-
-var PaymentMethodsSchema = new Schema({
+var PaymentMethodsSchema = ({
     name: String,
     amount_paid: Number
 });
