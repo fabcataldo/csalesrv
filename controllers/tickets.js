@@ -4,19 +4,8 @@ var Ticket = require('../models/tickets');
 function getTicket(req, res) {
 	var ticketId = req.params.id;
 
-	Ticket.findById(ticketId)
-	.populate({
-		
-		path: 'user', 
-		populate: {
-			path: 'role',
-			populate: {
-				path: 'privileges'
-			}
-		},
-	})
-	.populate({
-		path:'place'
+	Ticket.findById(ticketId).populate({
+		path: 'products',
 	})
 	.exec((err, ticket) => {
 		if (err) {
@@ -31,50 +20,10 @@ function getTicket(req, res) {
 	});
 }
 
-function getUserTickets(req, res){
-	Ticket.find({user: req.params.user})
-	.populate({
-		path: 'products',
-		populate: {
-			path: 'place'
-		}
-	})
-	.exec((err, tickets) => {
-		if (err) {
-			res.status(500).send({ message: 'Error en la petición' });
-		} else {
-			if (!tickets) {
-				res.status(404).send({ message: 'No hay tickets cargados' });
-			} else {
-				res.status(200).send(tickets);
-			}
-		}
-	});
-}
-
 function getTickets(req, res) {
-	Ticket.find({})
-	.populate({
-		path: 'products',
-		populate: {
-			path: 'place'
-		}
-	})
-	.populate('place')
-		.populate({
-
-			path: 'user',
-			populate: {
-				path: 'role',
-				populate: {
-					path: 'privileges'
-				}
-			},
-
-		})
-
-
-		.exec((err, tickets) => {
+	Ticket.find({}).populate({
+		path: 'products'
+	}).exec((err, tickets) => {
 			if (err) {
 				res.status(500).send({ message: 'Error en la petición' });
 			} else {
@@ -151,6 +100,5 @@ module.exports = {
 	getTickets,
 	updateTicket,
 	saveTicket,
-	deleteTicket,
-	getUserTickets
+	deleteTicket
 };

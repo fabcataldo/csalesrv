@@ -2,6 +2,7 @@
 var Place = require('../models/places');
 var Ticket = require('../models/tickets');
 var Comment = require('../models/comments');
+var url = require('url');
 
 function savePlace(req, res){
 	var params = req.body;
@@ -10,6 +11,10 @@ function savePlace(req, res){
     place.name= params.name;
 	place.address = params.address;
 	place.number_of_people_enabled = params.number_of_people_enabled;
+	place.lat = params.lat;
+	place.lng = params.lng;
+	place.tickets = params.tickets;
+	place.comments = params.comments;
 
 	place.save((err, placeStored) => {
 		if(err){
@@ -18,49 +23,45 @@ function savePlace(req, res){
 			if(!placeStored){
 				res.status(404).send({message: 'No se ha guardado el lugar'});
 			}else{
-				res.status(200).send({placeStored});
+				res.status(200).send(placeStored);
 			}
 		}
 	});
 }
 
-function countTickets(req, res){
-	var placeId = req.params.id;
-	var validDate = req.params.validDate;
-
-	//la consulta es: contar la cantidad de tickets que hay en la bd, según el lugar
-	//que se envíe como parametro en el endpoint
-	Ticket.find({place: placeId, valid_date_from: validDate}).countDocuments((err, countedTickets)=>{
-		if(err){
-			res.status(500).send({message: 'Error en la petición'});
-		}else{
-			if(!countedTickets){
-				res.status(404).send({message: 'No hay tickets comprados.'});
-			}else{
-				res.status(200).send({message: countedTickets});
-			}
-		}
-	})
-}
-
 function getPlace(req, res){
 	var placeId = req.params.id;
 
-	Place.findById(placeId).exec((err, place)=>{
+	Place.findById(placeId).populate({
+		path: 'tickets', 
+			populate: {
+				path: 'products'
+			}
+	}).populate({
+		path: 'comments'
+	}).exec((err, place)=>{
 		if(err){
 			res.status(500).send({message: 'Error en la petición'});
 		}else{
 			if(!place){
 				res.status(404).send({message: 'El lugar no existe.'});
 			}else{
-				res.status(200).send({place});
+				res.status(200).send(place);
 			}
 		}
 	});
 }
 
 function getPlaces(req, res){
-	Place.find({}).exec((err, places) => {
+	Place.find({}).populate({
+		path: 'tickets', 
+			populate: {
+				path: 'products'
+			}
+	}).populate({
+		path: 'comments'
+	})
+	.exec((err, places) => {
 		if(err){
 			res.status(500).send({message: 'Error en la petición'});
 		}else{
@@ -79,12 +80,13 @@ function updatePlace(req, res){
 
 	Place.findByIdAndUpdate(placeId, update, (err, placeUpdated) => {
 		if(err){
+			console.log(err);
 			res.status(500).send({message: 'Error en el servidor'});
 		}else{
 			if(!placeUpdated){
 				res.status(404).send({message: 'No se ha guardado el lugar'});
 			}else{
-				res.status(200). send({product: placeUpdated});
+				res.status(200). send(placeUpdated);
 			}
 		}
 	});
@@ -121,7 +123,7 @@ function deletePlace(req,res){
 		if(err){
 			res.status(500).send({message: 'Error al eliminar el lugar'});
 		}else{
-			res.status(200).send({place: placeDeleted});
+			res.status(200).send(placeDeleted);
 		}
 	});
 }
@@ -131,6 +133,5 @@ module.exports = {
 	getPlace,
 	getPlaces,
 	updatePlace,
-	deletePlace,
-	countTickets
+	deletePlace
 };

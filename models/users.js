@@ -8,7 +8,9 @@ var UsersSchema = new Schema({
 	email: String,
 	password: String,
 	loggedWithOAuth2: Boolean,
-	role: { type: Schema.ObjectId, ref: 'Roles'}
+	role: { type: Schema.ObjectId, ref: 'Roles'},
+	tickets: [{type: Schema.ObjectId, ref: 'Tickets'}],
+	comments: [{type: Schema.ObjectId, ref: 'Comments'}]
 });
 
 module.exports = mongoose.model('Users', UsersSchema)

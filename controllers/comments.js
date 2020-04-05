@@ -7,8 +7,6 @@ function saveComment(req, res){
 	var comment = new Comment();
 	comment.comment = params.comment;
 	comment.qualification = params.qualification;
-	comment.user = params.user;
-	comment.place = params.place;
 	
 	comment.save((err, commentStored) => {
 		if(err){
@@ -17,34 +15,23 @@ function saveComment(req, res){
 			if(!commentStored){
 				res.status(404).send({message: 'No se ha guardado el comentario'});
 			}else{
-				res.status(200).send({comment: commentStored});
+				res.status(200).send(commentStored);
 			}
 		}
 	});
 }
 
-
 function getComment(req, res){
 	var commentId = req.params.id;
 
-	Comment.find({}).populate({
-		path:'user',
-		populate:{
-			path: 'role',
-			populate:{
-				path:'privileges'
-			}
-		}
-	})
-	.populate({path:'place'})
-	.exec((err, comment)=>{
+	Comment.findById(commentId).exec((err, comment)=>{
 		if(err){
 			res.status(500).send({message: 'Error en la petición', err, err});
 		}else{
 			if(!comment){
 				res.status(404).send({message: 'No existe el comentario consultado.'});
 			}else{
-				res.status(200).send({comment});
+				res.status(200).send(comment);
 			}
 		}
 	});
@@ -68,18 +55,7 @@ function updateComment(req, res){
 }
 
 function getComments(req, res){
-	Comment.find({})
-	.populate({
-		path:'user',
-		populate:{
-			path: 'role',
-			populate:{
-				path:'privileges'
-			}
-		},
-	})
-	.populate({path:'place'})
-	.exec(function(err, comments){
+	Comment.find({}).exec(function(err, comments){
 		if(err){
 			
 			res.status(500).send({message: 'Error en la petición'});

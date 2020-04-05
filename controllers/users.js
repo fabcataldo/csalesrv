@@ -61,6 +61,8 @@ async function saveUser(req, res){
 	user.password = params.password;
 	user.role = params.role;
 	user.loggedWithOAuth2 = params.loggedWithOAuth2;
+	user.tickets = params.tickets;
+	user.comments = params.comments;
 
 	if(user==null){
 		console.log(user)
@@ -145,10 +147,32 @@ function loginUser(req, res){
 	});
 }
 
+
 function getUser(req, res){
 	var userId = req.params.id;
 
-	User.findById(userId).populate({path: 'role', populate : {path : 'privileges'}}).exec((err, user)=>{
+	User.findById(userId).populate({
+		path: 'tickets',
+			populate: {
+				path: 'products'
+			}
+	}).populate({
+		path: 'role', 
+		populate : {
+			path : 'privileges'
+		}
+	}).populate({
+		path: 'comments',
+		populate: {
+			path: 'place',
+			populate:{
+				path: 'tickets',
+				populate:{
+					path: 'products'
+				}
+			}
+		}
+	}).exec((err, user)=>{
 		if(err){
 			res.status(500).send({message: 'Error en la petición getUser '});
 		}else{
@@ -162,7 +186,28 @@ function getUser(req, res){
 }
 
 function getUsers(req, res){
-	User.find({}).populate({path: 'role', populate : {path : 'privileges'}}).exec((err, users) => {
+	User.find({}).populate({
+			path: 'tickets',
+				populate: {
+					path: 'products'
+				}
+	}).populate({
+		path: 'role', 
+		populate : {
+			path : 'privileges'
+		}
+	}).populate({
+		path: 'comments',
+		populate: {
+			path: 'place',
+			populate:{
+				path: 'tickets',
+				populate:{
+					path: 'products'
+				}
+			}
+		}
+	}).exec((err, users) => {
 		if(err){
 			res.status(500).send({message: 'Error en la petición get Users'});
 		}else{
