@@ -122,8 +122,32 @@ function loginUser(req, res){
 
 	var email = params.email;
 	var password = params.password;
-
-	User.findOne({email: email.toLowerCase(), loggedWithOAuth2: false}, (err, user) => {
+	User.findOne({email: email.toLowerCase(), loggedWithOAuth2: false})
+	.populate({
+		path: 'tickets',
+		populate: {
+			path: 'products'
+		}
+	})
+	.populate({
+		path: 'role', 
+		populate : {
+			path : 'privileges'
+		}
+	})
+	.populate({
+		path: 'comments',
+		populate: {
+			path: 'place',
+			populate:{
+				path: 'tickets',
+				populate:{
+					path: 'products'
+				}
+			}
+		}
+	})
+	.exec((err, user) => {
 		if(err){
 			res.status(500).send({message: 'Error en la petición login user'});
 		}else{
@@ -144,7 +168,7 @@ function loginUser(req, res){
 				});
 			}
 		}
-	});
+	})
 }
 
 
