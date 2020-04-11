@@ -15,6 +15,9 @@ function savePlace(req, res){
 	place.lng = params.lng;
 	place.tickets = params.tickets;
 	place.comments = params.comments;
+	params.customer_service_days.forEach(function(item){
+		place.customer_service_days.push(item);
+	})
 
 	place.save((err, placeStored) => {
 		if(err){
@@ -35,7 +38,10 @@ function getPlace(req, res){
 	Place.findById(placeId).populate({
 		path: 'tickets', 
 			populate: {
-				path: 'products'
+				path: 'purchased_products',
+					populate: {
+						path: 'products'
+					}
 			}
 	}).populate({
 		path: 'comments'
@@ -52,11 +58,58 @@ function getPlace(req, res){
 	});
 }
 
+function getFreeSpace(req, res){
+	var placeId = req.params.id;
+
+	Place.findById(placeId)
+	.populate({
+		path: 'tickets', 
+		populate: {
+			path: 'purchased_products',
+				populate: {
+					path: 'products'
+				}
+		}
+	}).populate({
+		path: 'comments'
+	})
+	.exec((err,result)=>{
+		if(err){
+			res.status(500).send({message: 'Error en la petición'});
+		}
+		else{
+			if(!result){
+				res.status(404).send({message: 'No existe el lugar!'});
+			}
+			else{
+				let statePlace = false;
+				let countedTickets = 0;
+				result.tickets.forEach(function(item){
+					if(item.valid_date_from.toLocaleDateString() === new Date().toLocaleDateString()){
+						countedTickets++;
+					}
+				})
+
+				if(countedTickets >= result.number_of_people_enabled){
+					res.status(200).send({freeSpace: false});
+				}
+				else{
+					res.status(200).send({freeSpace: true});
+				}
+
+			}
+		}
+	})
+}
+
 function getPlaces(req, res){
 	Place.find({}).populate({
 		path: 'tickets', 
 			populate: {
-				path: 'products'
+				path: 'purchased_products',
+					populate: {
+						path: 'products'
+					}
 			}
 	}).populate({
 		path: 'comments'
@@ -133,5 +186,6 @@ module.exports = {
 	getPlace,
 	getPlaces,
 	updatePlace,
-	deletePlace
+	deletePlace,
+	getFreeSpace
 };

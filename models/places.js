@@ -8,7 +8,8 @@ var PlacesSchema = Schema({
 	lat: Number,
 	lng: Number,
 	tickets: [{type: Schema.ObjectId, ref: 'Tickets'}],
-	comments: [{type: Schema.ObjectId, ref: 'Comments'}]
+	comments: [{type: Schema.ObjectId, ref: 'Comments'}],
+	customer_service_days: [Number]
 });
 
 module.exports = mongoose.model('Places', PlacesSchema)
