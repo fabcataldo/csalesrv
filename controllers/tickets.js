@@ -5,7 +5,10 @@ function getTicket(req, res) {
 	var ticketId = req.params.id;
 
 	Ticket.findById(ticketId).populate({
-		path: 'products',
+		path: 'purchased_products',
+			populate: {
+				path: 'products'
+			}
 	})
 	.exec((err, ticket) => {
 		if (err) {
@@ -21,9 +24,14 @@ function getTicket(req, res) {
 }
 
 function getTickets(req, res) {
-	Ticket.find({}).populate({
-		path: 'products'
-	}).exec((err, tickets) => {
+	Ticket.find({})
+	.populate({
+		path: 'purchased_products',
+		populate:{
+			path: 'product'
+		}
+	})
+	.exec((err, tickets) => {
 			if (err) {
 				res.status(500).send({ message: 'Error en la petición' });
 			} else {
@@ -42,11 +50,13 @@ function saveTicket(req, res) {
 
 	ticket.date_of_purchase = params.date_of_purchase;
 	ticket.user = params.user;
-	for(let i=0;i<params.payment_methods.length;i++){
-		ticket.payment_methods.push(params.payment_methods[i])
-	}
 
-	ticket.products = params.products;
+	params.payment_methods.forEach(function(item){
+		ticket.payment_methods.push(item)
+	})
+	params.purchased_products.forEach(function(item){
+		ticket.purchased_products.push(item)
+	})
 	ticket.place = params.place;
 	ticket.total = params.total;
 

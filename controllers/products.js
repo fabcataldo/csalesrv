@@ -7,7 +7,6 @@ function saveProduct(req, res){
 	var product = new Product();
     product.description = params.description;
 	product.price = params.price;
-	product.quantity = params.quantity;
 
 	product.save((err, productStored) => {
 		if(err){
