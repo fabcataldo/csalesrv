@@ -15,6 +15,7 @@ var roles_routes = require('./routes/roles');
 var products_routes = require('./routes/products');
 var places_routes = require('./routes/places');
 var mercadopagocheckout_routes = require('./routes/mercado_pago_checkout/mercado_pago_checkout');
+var purchased_products_routes = require('./routes/purchased_products');
 
 app.use(bodyParser.urlencoded({extended:false}));
 app.use(bodyParser.json());
@@ -37,6 +38,7 @@ app.use('/api', roles_routes);
 app.use('/api', products_routes);
 app.use('/api', places_routes);
 app.use('/api', mercadopagocheckout_routes);
+app.use('/api', purchased_products_routes)
 
 
 module.exports = app;
