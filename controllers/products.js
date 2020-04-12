@@ -7,6 +7,8 @@ function saveProduct(req, res){
 	var product = new Product();
     product.description = params.description;
 	product.price = params.price;
+	product.valid_date_from = params.valid_date_from;
+	product.valid_date_to = params.valid_date_to;
 
 	product.save((err, productStored) => {
 		if(err){
@@ -45,7 +47,7 @@ function getProducts(req, res){
 			if(!products){
 				res.status(404).send({message: 'No hay productos'});
 			}else{
-				res.status(200).send({products});
+				res.status(200).send(products);
 			}
 		}
 	});

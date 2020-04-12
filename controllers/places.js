@@ -82,13 +82,13 @@ function getFreeSpace(req, res){
 				res.status(404).send({message: 'No existe el lugar!'});
 			}
 			else{
-				let statePlace = false;
 				let countedTickets = 0;
-				result.tickets.forEach(function(item){
-					if(item.valid_date_from.toLocaleDateString() === new Date().toLocaleDateString()){
-						countedTickets++;
-					}
-				})
+				if(result.tickets)
+					result.tickets.forEach(function(item){
+						if(item.date_of_purchase.toLocaleDateString() === new Date().toLocaleDateString()){
+							countedTickets++;
+						}
+					})
 
 				if(countedTickets >= result.number_of_people_enabled){
 					res.status(200).send({freeSpace: false});
