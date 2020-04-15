@@ -70,68 +70,78 @@ async function saveUser(req, res) {
 	}
 	else {
 		User.findOne({ email: user.email.toLowerCase() })
-		.populate({
-			path: 'role',
-			populate: {
-				path: 'privileges'
-			}
-		}).populate({
-			path: 'comments',
-		})
-		.populate({
-			path: 'tickets',
-			populate: {
-				path: 'purchased_products',
+			.populate({
+				path: 'role',
 				populate: {
-					path: 'product'
+					path: 'privileges'
 				}
-			}
-		}).exec((err, userResult) => {
-			if (err) {
-				res.status(500).send(err)
-			}
-			else {
-				if (!userResult) {
-					if (user.password) {
-						bcrypt.hash(user.password, null, null, function (err, hash) {
-							user.password = hash;
-						})
+			}).populate({
+				path: 'comments',
+			})
+			.populate({
+				path: 'tickets',
+				populate: {
+					path: 'purchased_products',
+					populate: {
+						path: 'product'
 					}
-					else {
-						if (!user.loggedWithOAuth2) {
-							res.status(400).send({ message: 'Introduce la contraseña' });
-						}
-						else {
-							bcrypt.hash(makeRandomString(user.email.length), null, null, function (err, hash) {
+				}
+			})
+			.populate({
+				path: 'tickets',
+				populate: {
+					path: 'payment_methods',
+					populate: {
+						path: 'payment_method'
+					}
+				}
+			})
+			.exec((err, userResult) => {
+				if (err) {
+					res.status(500).send(err)
+				}
+				else {
+					if (!userResult) {
+						if (user.password) {
+							bcrypt.hash(user.password, null, null, function (err, hash) {
 								user.password = hash;
 							})
 						}
-					}
-					if (!user.role) {
-						Role.findOne({ name: 'cliente' }).populate({ path: 'privileges' }).exec((err, role) => {
-							if (err) {
-								res.status(500).send('Error en la petición get Role');
-							} else {
-								if (!role) {
-									res.status(404).send('El rol no existe.');
-								} else {
-									recClientUser(user, res);
-								}
+						else {
+							if (!user.loggedWithOAuth2) {
+								res.status(400).send({ message: 'Introduce la contraseña' });
 							}
-						});
+							else {
+								bcrypt.hash(makeRandomString(user.email.length), null, null, function (err, hash) {
+									user.password = hash;
+								})
+							}
+						}
+						if (!user.role) {
+							Role.findOne({ name: 'cliente' }).populate({ path: 'privileges' }).exec((err, role) => {
+								if (err) {
+									res.status(500).send('Error en la petición get Role');
+								} else {
+									if (!role) {
+										res.status(404).send('El rol no existe.');
+									} else {
+										recClientUser(user, res);
+									}
+								}
+							});
+						}
+						else {
+							recUser(user, res);
+						}
 					}
 					else {
-						recUser(user, res);
+						res.status(200).send({
+							user: userResult,
+							token: jwt.createToken(userResult)
+						});
 					}
 				}
-				else {
-					res.status(200).send({
-						user: userResult,
-						token: jwt.createToken(userResult)
-					});
-				}
-			}
-		})
+			})
 	}
 }
 
@@ -158,6 +168,15 @@ function loginUser(req, res) {
 				}
 			}
 		})
+		.populate({
+			path: 'tickets',
+			populate: {
+				path: 'payment_methods',
+				populate: {
+					path: 'payment_method'
+				}
+			}
+		})
 		.exec((err, user) => {
 			if (err) {
 				res.status(500).send({ message: 'Error en la petición login user' });
@@ -174,6 +193,7 @@ function loginUser(req, res) {
 								token: jwt.createToken(user)
 							});
 						} else {
+							console.log(err);
 							res.status(404).send({ message: 'El usuario no ha podido loguease' });
 						}
 					});
@@ -186,14 +206,16 @@ function loginUser(req, res) {
 function getUser(req, res) {
 	var userId = req.params.id;
 
-	User.findById(userId).populate({
-		path: 'role',
-		populate: {
-			path: 'privileges'
-		}
-	}).populate({
-		path: 'comments',
-	})
+	User.findById(userId)
+		.populate({
+			path: 'role',
+			populate: {
+				path: 'privileges'
+			}
+		})
+		.populate({
+			path: 'comments',
+		})
 		.populate({
 			path: 'tickets',
 			populate: {
@@ -202,7 +224,18 @@ function getUser(req, res) {
 					path: 'product'
 				}
 			}
-		}).exec((err, user) => {
+
+		})
+		.populate({
+			path: 'tickets',
+			populate: {
+				path: 'payment_methods',
+				populate: {
+					path: 'payment_method'
+				}
+			}
+		})
+		.exec((err, user) => {
 			if (err) {
 				res.status(500).send({ message: 'Error en la petición getUser ' });
 			} else {
@@ -222,7 +255,8 @@ function getUsers(req, res) {
 			populate: {
 				path: 'privileges'
 			}
-		}).populate({
+		})
+		.populate({
 			path: 'comments',
 		})
 		.populate({
@@ -231,6 +265,15 @@ function getUsers(req, res) {
 				path: 'purchased_products',
 				populate: {
 					path: 'product'
+				}
+			}
+		})
+		.populate({
+			path: 'tickets',
+			populate: {
+				path: 'payment_methods',
+				populate: {
+					path: 'payment_method'
 				}
 			}
 		})

@@ -61,16 +61,25 @@ function getPlace(req, res){
 function getFreeSpace(req, res){
 	var placeId = req.params.id;
 
-	Place.findById(placeId)
-	.populate({
+	Place.findById(placeId).populate({
 		path: 'tickets', 
-		populate: {
-			path: 'purchased_products',
+			populate: {
+				path: 'payment_methods',
 				populate: {
-					path: 'products'
+					path: 'payment_method'
+				}
+			}
+	})
+	.populate({
+		path: 'tickets',
+		populate:{
+				path: 'purchased_products',
+				populate: {
+					path: 'product'
 				}
 		}
-	}).populate({
+	})
+	.populate({
 		path: 'comments'
 	})
 	.exec((err,result)=>{
@@ -106,12 +115,22 @@ function getPlaces(req, res){
 	Place.find({}).populate({
 		path: 'tickets', 
 			populate: {
-				path: 'purchased_products',
-					populate: {
-						path: 'products'
-					}
+				path: 'payment_methods',
+				populate: {
+					path: 'payment_method'
+				}
 			}
-	}).populate({
+	})
+	.populate({
+		path: 'tickets',
+		populate:{
+				path: 'purchased_products',
+				populate: {
+					path: 'product'
+				}
+		}
+	})
+	.populate({
 		path: 'comments'
 	})
 	.exec((err, places) => {
