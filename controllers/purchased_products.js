@@ -25,7 +25,11 @@ function save(req, res){
 function getOne(req, res){
 	var id = req.params.id;
 
-	PurchasedProducts.findById(id).exec((err, entity)=>{
+	PurchasedProducts.findById(id)
+	.populate({
+		path: 'product'
+	})
+	.exec((err, entity)=>{
 		if(err){
 			res.status(500).send({message: 'Error en la petición'});
 		}else{
@@ -39,7 +43,11 @@ function getOne(req, res){
 }
 
 function getAll(req, res){
-	PurchasedProducts.find({}).exec((err, entities) => {
+	PurchasedProducts.find({})
+	.populate({
+		path: 'product'
+	})
+	.exec((err, entities) => {
 		if(err){
 			res.status(500).send({message: 'Error en la petición'});
 		}else{

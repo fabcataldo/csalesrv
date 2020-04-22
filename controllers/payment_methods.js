@@ -6,7 +6,7 @@ function save(req, res){
 
 	var paymentMethods = new PaymentMethods();
 	paymentMethods.payment_method = params.payment_method;
-    paymentMethods.credit_card = params.credit_card;
+    paymentMethods.card = params.card;
 	paymentMethods.amount_paid = params.amount_paid;
 
 	paymentMethods.save((err, entity) => {
@@ -25,7 +25,10 @@ function save(req, res){
 function getOne(req, res){
 	var id = req.params.id;
 
-	PaymentMethods.findById(id).populate('payment_method').exec((err, entity)=>{
+	PaymentMethods.findById(id)
+	.populate('payment_method')
+	.populate('card')
+	.exec((err, entity)=>{
 		if(err){
 			res.status(500).send({message: 'Error en la petición'});
 		}else{
@@ -39,7 +42,10 @@ function getOne(req, res){
 }
 
 function getAll(req, res){
-	PaymentMethods.find({}).populate('payment_method').exec((err, entities) => {
+	PaymentMethods.find({})
+	.populate('payment_method')
+	.populate('card')
+	.exec((err, entities) => {
 		if(err){
 			res.status(500).send({message: 'Error en la petición'});
 		}else{
@@ -58,6 +64,7 @@ function update(req, res){
 
 	PaymentMethods.findByIdAndUpdate(id, update, (err, entity) => {
 		if(err){
+			console.log(err)
 			res.status(500).send({message: 'Error en el servidor'});
 		}else{
 			if(!entity){

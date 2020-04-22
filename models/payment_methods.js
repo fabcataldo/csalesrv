@@ -3,10 +3,7 @@ var Schema = mongoose.Schema;
 
 var PaymentMethodsSchema = Schema({
     payment_method: {type: Schema.ObjectId, ref: 'AvailablePaymentMethods'},
-    //si va a ser pago en efectivo, acá debajo va a decir algo como:
-    //""
-    //y si es con tarjeta, va a decir el número de tarjeta
-    credit_card: String,
+    card: {type: Schema.ObjectId, ref: 'Cards'},
     amount_paid: Number
 });
 

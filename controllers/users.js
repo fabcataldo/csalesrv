@@ -92,7 +92,8 @@ async function saveUser(req, res) {
 				populate: {
 					path: 'payment_methods',
 					populate: {
-						path: 'payment_method'
+						path: 'payment_method',
+						path: 'card'
 					}
 				}
 			})
@@ -173,7 +174,8 @@ function loginUser(req, res) {
 			populate: {
 				path: 'payment_methods',
 				populate: {
-					path: 'payment_method'
+					path: 'payment_method',
+					path: 'card'
 				}
 			}
 		})
@@ -231,7 +233,8 @@ function getUser(req, res) {
 			populate: {
 				path: 'payment_methods',
 				populate: {
-					path: 'payment_method'
+					path: 'payment_method',
+					path: 'card'
 				}
 			}
 		})
@@ -273,7 +276,8 @@ function getUsers(req, res) {
 			populate: {
 				path: 'payment_methods',
 				populate: {
-					path: 'payment_method'
+					path: 'payment_method',
+					path: 'card'
 				}
 			}
 		})
@@ -321,7 +325,35 @@ function updateUser(req, res) {
 
 			}
 		}
-	});
+	})
+	.populate({
+		path: 'role',
+		populate: {
+			path: 'privileges'
+		}
+	}).populate({
+		path: 'comments',
+	})
+	.populate({
+		path: 'tickets',
+		populate: {
+			path: 'purchased_products',
+			populate: {
+				path: 'product'
+			}
+		}
+	})
+	.populate({
+		path: 'tickets',
+		populate: {
+			path: 'payment_methods',
+			populate: {
+				path: 'payment_method',
+				path: 'card'
+			}
+		}
+	})
+	;
 }
 
 function deleteUser(req, res) {

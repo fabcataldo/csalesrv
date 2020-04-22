@@ -16,6 +16,12 @@ function getTicket(req, res) {
 			path: 'payment_method'
 		}
 	})
+	.populate({
+		path: 'payment_methods',
+		populate: {
+			path: 'card'
+		}
+	})
 	.exec((err, ticket) => {
 		if (err) {
 			res.status(500).send({ message: 'Error en la petición' });
@@ -41,6 +47,12 @@ function getTickets(req, res) {
 		path: 'payment_methods',
 		populate: {
 			path: 'payment_method'
+		}
+	})
+	.populate({
+		path: 'payment_methods',
+		populate: {
+			path: 'card'
 		}
 	})
 	.exec((err, tickets) => {
