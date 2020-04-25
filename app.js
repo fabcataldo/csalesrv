@@ -21,7 +21,8 @@ var payment_methods_routes = require('./routes/payment_methods');
 var cards_routes = require('./routes/cards');
 
 app.use(bodyParser.urlencoded({extended:false}));
-app.use(bodyParser.json());
+//app.use(bodyParser.json());
+app.use(bodyParser.json({limit: '1mb', entended: true}));
 app.use(cors())
 // configurar cabeceras http
 app.use(function(req, res, next){

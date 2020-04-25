@@ -2,6 +2,7 @@
 var Place = require('../models/places');
 var Ticket = require('../models/tickets');
 var Comment = require('../models/comments');
+var ObjectID = require('bson').ObjectID;
 var url = require('url');
 
 function savePlace(req, res){
@@ -149,6 +150,13 @@ function getPlaces(req, res){
 function updatePlace(req, res){
 	var placeId = req.params.id;
 	var update = req.body;
+
+	//si el usuario hizo una nueva compra
+	update.tickets.forEach(ticket => {
+		if (!ticket._id) {
+			ticket._id = new ObjectID();
+		}
+	})
 
 	Place.findByIdAndUpdate(placeId, update, (err, placeUpdated) => {
 		if(err){

@@ -5,6 +5,7 @@ var bcrypt = require('bcrypt-nodejs');
 var Ticket = require('../models/tickets');
 var Comment = require('../models/comments');
 var Role = require('../models/roles');
+var ObjectID = require('bson').ObjectID;
 
 
 function makeRandomString(length) {
@@ -65,7 +66,6 @@ async function saveUser(req, res) {
 	user.comments = params.comments;
 
 	if (user == null) {
-		console.log(user)
 		res.status(200).send({ message: 'Rellena todos los campos' });
 	}
 	else {
@@ -297,6 +297,13 @@ function getUsers(req, res) {
 function updateUser(req, res) {
 	var userId = req.params.id;
 	var userToUpdate = req.body;
+
+	//si el usuario hizo una nueva compra
+	userToUpdate.tickets.forEach(ticket=>{
+		if(!ticket._id){
+			ticket._id = new ObjectID();
+		}
+	})
 
 	var previousUserPwd = userToUpdate.password;
 	if (previousUserPwd.charAt(0) !== '$') {
