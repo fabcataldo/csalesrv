@@ -1,13 +1,13 @@
 {
   "name": "CSaleSrv",
   "version": "1.0.0",
-  "description": "Proyecto de API Rest para domotica mediante mqtt",
+  "description": "Proyecto de API Rest para el producto digital CSale",
   "main": "index.js",
   "scripts": {
     "start": "nodemon index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
-  "author": "fcabanilla",
+  "author": "fabioalbertocataldo",
   "license": "MIT",
   "dependencies": {
     "bcrypt-nodejs": "0.0.3",
