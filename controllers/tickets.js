@@ -4,10 +4,11 @@ var Ticket = require('../models/tickets');
 function getTicket(req, res) {
 	var ticketId = req.params.id;
 
-	Ticket.findById(ticketId).populate({
+	Ticket.findById(ticketId)
+	.populate({
 		path: 'purchased_products',
 			populate: {
-				path: 'products'
+				path: 'product'
 			}
 	})
 	.populate({
@@ -34,6 +35,7 @@ function getTicket(req, res) {
 		}
 	});
 }
+
 
 function getTickets(req, res) {
 	Ticket.find({})
