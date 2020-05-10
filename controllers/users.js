@@ -154,6 +154,21 @@ async function saveUser(req, res) {
 	}
 }
 
+function getClientTicket(req,res){
+	User.find({"tickets": req.params.ticketId})
+	.exec((err, user) => {
+		if (err) {
+			res.status(500).send({ message: 'Error en la petición' });
+		} else {
+			if (!user) {
+				res.status(404).send({ message: 'Usuario no encontrado de este ticket' });
+			} else {
+				res.status(200).send(user);
+			}
+		}
+	});
+}
+
 function loginUser(req, res) {
 	var params = req.body;
 
@@ -410,10 +425,9 @@ function deleteUser(req, res) {
 			res.status(500).send({ message: 'Error en eliminar los tickets del usuario con id:' + userId });
 		} else {
 			if (!res) {
-				//res.status(404).send({message: 'No hay tickets asociados alusuario con id:'+userId});
 				console.log('No hay tickets asociados alusuario con id:' + userId);
+				res.status(404).send({message: 'No hay tickets asociados alusuario con id:'+userId});
 			} else {
-				//res.status(200).send({status: 'OK'});
 				console.log('Borrado de tickets del usuario ' + userId + ' OK');
 			}
 		}
@@ -424,11 +438,10 @@ function deleteUser(req, res) {
 			res.status(500).send({ message: 'Error en eliminar los comentarios del usuario con id:' + userId });
 		} else {
 			if (!res) {
-				//res.status(404).send({message: 'No hay comentarios asociados al usuario con id:'+userId});
 				console.log('No hay comentarios asociados al usuario con id:' + userId);
+				res.status(404).send({message: 'No hay comentarios asociados al usuario con id:'+userId});
 			} else {
 				console.log('Borrado de comentarios del usuario ' + userId + ' OK.');
-				//res.status(200).send({status: 'OK'});
 			}
 		}
 	});
@@ -450,5 +463,6 @@ module.exports = {
 	getUsers,
 	updateUser,
 	deleteUser,
-	loginUser
+	loginUser,
+	getClientTicket
 };

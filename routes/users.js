@@ -11,5 +11,6 @@ api.get('/users', md_auth.ensureAuth, UsersController.getUsers);
 api.put('/users/:id', md_auth.ensureAuth, UsersController.updateUser);
 api.delete('/users/:id', md_auth.ensureAuth, UsersController.deleteUser);
 api.post('/login', UsersController.loginUser);
+api.get('/users/ticket/:ticketId', md_auth.ensureAuth, UsersController.getClientTicket);
 
 module.exports = api;
