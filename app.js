@@ -18,7 +18,6 @@ var mercadopagocheckout_routes = require('./routes/mercado_pago_checkout/mercado
 var purchased_products_routes = require('./routes/purchased_products');
 var available_payment_methods_routes = require('./routes/available_payment_methods');
 var payment_methods_routes = require('./routes/payment_methods');
-var cards_routes = require('./routes/cards');
 
 app.use(bodyParser.urlencoded({extended:false}));
 //app.use(bodyParser.json());
@@ -45,7 +44,6 @@ app.use('/api', mercadopagocheckout_routes);
 app.use('/api', purchased_products_routes);
 app.use('/api', payment_methods_routes);
 app.use('/api', available_payment_methods_routes);
-app.use('/api', cards_routes);
 
 
 
