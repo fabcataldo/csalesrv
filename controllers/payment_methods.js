@@ -6,11 +6,10 @@ function save(req, res){
 
 	var paymentMethods = new PaymentMethods();
 	paymentMethods.payment_method = params.payment_method;
-    paymentMethods.card = params.card;
 	paymentMethods.amount_paid = params.amount_paid;
 
 	paymentMethods.save((err, entity) => {
-		if(err){
+		if(err){		
 			res.status(500).send({message: 'Error en el servidor'});
 		}else{
 			if(!entity){
