@@ -1,6 +1,5 @@
 'use strict'
 var Ticket = require('../models/tickets');
-var ObjectID = require('bson').ObjectID;
 
 
 function getTicket(req, res) {
@@ -79,8 +78,6 @@ function saveTicket(req, res) {
 	ticket.date_of_purchase = params.date_of_purchase;
 	ticket.user = params.user;
 
-	console.log('PRAMS: ')
-	console.log(params)
 
 	params.payment_methods.forEach(function(item){
 		ticket.payment_methods.push(item)
