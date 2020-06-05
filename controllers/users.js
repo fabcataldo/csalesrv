@@ -5,7 +5,7 @@ var bcrypt = require('bcrypt-nodejs');
 var Ticket = require('../models/tickets');
 var Comment = require('../models/comments');
 var Role = require('../models/roles');
-var ObjectID = require('bson').ObjectID;
+//var ObjectID = require('bson').ObjectID;
 
 
 function makeRandomString(length) {
@@ -155,7 +155,7 @@ async function saveUser(req, res) {
 }
 
 function getClientTicket(req,res){
-	User.find({"tickets": req.params.ticketId})
+	User.findOne({"tickets": req.params.ticketId})
 	.exec((err, user) => {
 		if (err) {
 			res.status(500).send({ message: 'Error en la petición' });
@@ -345,12 +345,14 @@ function updateUser(req, res) {
 	var userId = req.params.id;
 	var userToUpdate = req.body;
 
+	/*
 	//si el usuario hizo una nueva compra
 	userToUpdate.tickets.forEach(ticket=>{
 		if(!ticket._id){
 			ticket._id = new ObjectID();
 		}
 	})
+	*/
 
 	var previousUserPwd = userToUpdate.password;
 	if (previousUserPwd.charAt(0) !== '$') {
