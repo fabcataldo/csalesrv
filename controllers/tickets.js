@@ -39,6 +39,10 @@ function getTicket(req, res) {
 
 
 function getTickets(req, res) {
+	if(req.query.date_from || req.query.date_to){
+		getTicketsByDate(req, res);
+		return;
+	}
 	Ticket.find({})
 	.populate({
 		path: 'purchased_products',
@@ -102,6 +106,49 @@ function saveTicket(req, res) {
 	});
 }
 
+function getTicketsByDate(req, res){
+	var date_from = req.query.date_from;
+	var date_to = req.query.date_to;
+	var query = {"date_of_purchase": {}}
+	
+	if(date_to == "null")
+		query.date_of_purchase = date_from
+	else
+		query.date_of_purchase = {$gte: date_from, $lte: date_to}
+
+	Ticket.find(query)
+	.populate({
+		path: 'purchased_products',
+		populate:{
+			path: 'product'
+		}
+	})
+	.populate({
+		path: 'payment_methods',
+		populate: {
+			path: 'payment_method'
+		}
+	})
+	.populate({
+		path: 'payment_methods',
+		populate: {
+			path: 'card'
+		}
+	})
+	.exec((err, tickets) => {
+			if (err) {
+				console.log(err);
+				res.status(500).send({ message: 'Error en la petición' });
+			} else {
+				if (!tickets) {
+					res.status(404).send({ message: 'No hay tickets cargados' });
+				} else {
+					res.status(200).send(tickets);
+				}
+			}
+		});
+}
+
 
 function updateTicket(req, res) {
 	var ticketId = req.params.id;
@@ -138,5 +185,6 @@ module.exports = {
 	getTickets,
 	updateTicket,
 	saveTicket,
-	deleteTicket
+	deleteTicket,
+	getTicketsByDate
 };
