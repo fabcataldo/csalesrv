@@ -62,7 +62,7 @@ function getRoles(req, res){
 			if(!roles){
 				res.status(404).send({message: 'No hay Roles!!'});
 			}else{
-				res.status(200).send({roles});
+				res.status(200).send(roles);
 			}
 		}
 	});
