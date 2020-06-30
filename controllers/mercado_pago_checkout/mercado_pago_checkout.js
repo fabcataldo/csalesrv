@@ -1,6 +1,6 @@
 'use strict'
 const mercadopago = require('mercadopago');
-var config = require('../../private_resources/config');
+const config = require('../../private_resources/config');
 var express = require('express');
 
 
@@ -51,6 +51,7 @@ function preferenceProduct(req, res) {
       description: req.body.description,
       installments: 1,
       payment_method_id: req.body.payment_method_id,
+      issuer_id: req.body.issuer_id,
       payer: {
         email: 'test_user_30246109@testuser.com'
       }
@@ -73,7 +74,7 @@ function preferenceProduct(req, res) {
         email: 'test_user_75767751@testuser.com'
       }
     };
-    mercadopago.payment.create(payment_data).then(function (data) {
+    mercadopago.payment.save(payment_data).then(function (data) {
       res.status(200).send(data)
     }).catch(function (error) {
       console.log(error);
