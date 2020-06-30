@@ -5,18 +5,7 @@ var bcrypt = require('bcrypt-nodejs');
 var Ticket = require('../models/tickets');
 var Comment = require('../models/comments');
 var Role = require('../models/roles');
-//var ObjectID = require('bson').ObjectID;
-
-
-function makeRandomString(length) {
-	var result = '';
-	var characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-	var charactersLength = characters.length;
-	for (var i = 0; i < length; i++) {
-		result += characters.charAt(Math.floor(Math.random() * charactersLength));
-	}
-	return result;
-}
+var makeRandomString = require('../utils/randomUtils');
 
 
 function recUser(user, res) {
@@ -155,7 +144,13 @@ async function saveUser(req, res) {
 }
 
 function getClientTicket(req,res){
-	User.findOne({"tickets": req.params.ticketId})
+	User.findOne({"tickets":{"$in":[{"_id":req.params.ticketId}]}})
+	.populate({
+		path: 'role',
+		populate: {
+			path: 'privileges'
+		}
+	})
 	.exec((err, user) => {
 		if (err) {
 			res.status(500).send({ message: 'Error en la petición' });
