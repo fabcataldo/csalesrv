@@ -1,5 +1,6 @@
 'use strict'
 var Ticket = require('../models/tickets');
+var randomUtils = require('../utils/randomUtils');
 
 
 function getTicket(req, res) {
@@ -37,10 +38,49 @@ function getTicket(req, res) {
 	});
 }
 
+function getTicketByUniqueCode(req, res) {
+	var uniqueCode = req.query.uniqueCode;
+	Ticket.findOne({'unique_code': uniqueCode})
+	.populate({
+		path: 'purchased_products',
+			populate: {
+				path: 'product'
+			}
+	})
+	.populate({
+		path: 'payment_methods',
+		populate: {
+			path: 'payment_method'
+		}
+	})
+	.populate({
+		path: 'payment_methods',
+		populate: {
+			path: 'card'
+		}
+	})
+	.exec((err, ticket) => {
+		if (err) {
+			res.status(500).send({ message: 'Error en la petición' });
+		} else {
+			if (!ticket) {
+				res.status(404).send({ message: 'No hay ticket cargado' });
+			} else {
+				res.status(200).send( ticket );
+			}
+		}
+	});
+}
+
+
 
 function getTickets(req, res) {
 	if(req.query.date_from || req.query.date_to){
 		getTicketsByDate(req, res);
+		return;
+	}
+	if(req.query.uniqueCode){
+		getTicketByUniqueCode(req, res);
 		return;
 	}
 	Ticket.find({})
@@ -54,12 +94,6 @@ function getTickets(req, res) {
 		path: 'payment_methods',
 		populate: {
 			path: 'payment_method'
-		}
-	})
-	.populate({
-		path: 'payment_methods',
-		populate: {
-			path: 'card'
 		}
 	})
 	.exec((err, tickets) => {
@@ -87,6 +121,8 @@ function saveTicket(req, res) {
 	})
 	ticket.place = params.place;
 	ticket.total = params.total;
+	ticket.unique_code = randomUtils.makeUniqueCode(4);
+	
 
 	ticket.save((err, ticketStored) => {
 		if (err) {
@@ -126,7 +162,6 @@ function saveTicket(req, res) {
 						}
 					}
 				});
-				//res.status(200).send({ ticket: ticketStored });
 			}
 		}
 	});
@@ -213,5 +248,6 @@ module.exports = {
 	updateTicket,
 	saveTicket,
 	deleteTicket,
-	getTicketsByDate
+	getTicketsByDate,
+	getTicketByUniqueCode
 };
