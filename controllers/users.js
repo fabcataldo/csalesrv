@@ -169,7 +169,7 @@ function loginUser(req, res) {
 
 	var email = params.email;
 	var password = params.password;
-	User.findOne({ email: email.toLowerCase(), loggedWithOAuth2: false })
+	User.findOne({ email: email.toLowerCase() })
 		.populate({
 			path: 'role',
 			populate: {
@@ -221,7 +221,6 @@ function loginUser(req, res) {
 								token: jwt.createToken(user)
 							});
 						} else {
-							console.log(err);
 							res.status(404).send({ message: 'El usuario no ha podido loguease' });
 						}
 					});
@@ -340,15 +339,6 @@ function updateUser(req, res) {
 	var userId = req.params.id;
 	var userToUpdate = req.body;
 
-	/*
-	//si el usuario hizo una nueva compra
-	userToUpdate.tickets.forEach(ticket=>{
-		if(!ticket._id){
-			ticket._id = new ObjectID();
-		}
-	})
-	*/
-
 	var previousUserPwd = userToUpdate.password;
 	if (previousUserPwd.charAt(0) !== '$') {
 		userToUpdate.password = bcrypt.hashSync(userToUpdate.password, null)
@@ -364,13 +354,13 @@ function updateUser(req, res) {
 			} else {
 				if (previousUserPwd.charAt(0) !== '$') {
 					res.status(200).send({
-						user: userToUpdate,
-						token: jwt.createToken(userToUpdate)
+						user: userUpdated,
+						token: jwt.createToken(userUpdated)
 					});
 				}
 				else {
 					res.status(200).send({
-						user: userToUpdate
+						user: userUpdated
 					});
 				}
 
