@@ -216,10 +216,11 @@ function loginUser(req, res) {
 					bcrypt.compare(password, user.password, function (err, check) {
 						if (check) {
 							//devolver los datos del usuario logueado
-							res.status(200).send({
-								user: user,
-								token: jwt.createToken(user)
-							});
+							if(!user.loggedWithOAuth2)
+								res.status(200).send({
+									user: user,
+									token: jwt.createToken(user)
+								});
 						} else {
 							res.status(404).send({ message: 'El usuario no ha podido loguease' });
 						}
