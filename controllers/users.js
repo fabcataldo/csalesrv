@@ -4,8 +4,10 @@ var jwt = require('../services/jwt');
 var bcrypt = require('bcrypt-nodejs');
 var Ticket = require('../models/tickets');
 var Comment = require('../models/comments');
+var sgMail = require('@sendgrid/mail');
 var Role = require('../models/roles');
 var makeRandomString = require('../utils/randomUtils');
+const randomUtils = require('../utils/randomUtils');
 
 
 function recUser(user, res) {
@@ -143,25 +145,25 @@ async function saveUser(req, res) {
 	}
 }
 
-function getClientTicket(req,res){
-	User.findOne({"tickets":{"$in":[{"_id":req.params.ticketId}]}})
-	.populate({
-		path: 'role',
-		populate: {
-			path: 'privileges'
-		}
-	})
-	.exec((err, user) => {
-		if (err) {
-			res.status(500).send({ message: 'Error en la petición' });
-		} else {
-			if (!user) {
-				res.status(404).send({ message: 'Usuario no encontrado de este ticket' });
-			} else {
-				res.status(200).send(user);
+function getClientTicket(req, res) {
+	User.findOne({ "tickets": { "$in": [{ "_id": req.params.ticketId }] } })
+		.populate({
+			path: 'role',
+			populate: {
+				path: 'privileges'
 			}
-		}
-	});
+		})
+		.exec((err, user) => {
+			if (err) {
+				res.status(500).send({ message: 'Error en la petición' });
+			} else {
+				if (!user) {
+					res.status(404).send({ message: 'Usuario no encontrado de este ticket' });
+				} else {
+					res.status(200).send(user);
+				}
+			}
+		});
 }
 
 function loginUser(req, res) {
@@ -216,7 +218,7 @@ function loginUser(req, res) {
 					bcrypt.compare(password, user.password, function (err, check) {
 						if (check) {
 							//devolver los datos del usuario logueado
-							if(!user.loggedWithOAuth2)
+							if (!user.loggedWithOAuth2)
 								res.status(200).send({
 									user: user,
 									token: jwt.createToken(user)
@@ -368,41 +370,88 @@ function updateUser(req, res) {
 			}
 		}
 	})
-	.populate({
-		path: 'role',
-		populate: {
-			path: 'privileges'
-		}
-	}).populate({
-		path: 'comments',
-	})
-	.populate({
-		path: 'tickets',
-		populate: {
-			path: 'purchased_products',
+		.populate({
+			path: 'role',
 			populate: {
-				path: 'product'
+				path: 'privileges'
+			}
+		}).populate({
+			path: 'comments',
+		})
+		.populate({
+			path: 'tickets',
+			populate: {
+				path: 'purchased_products',
+				populate: {
+					path: 'product'
+				}
+			}
+		})
+		.populate({
+			path: 'tickets',
+			populate: {
+				path: 'payment_methods',
+				populate: {
+					path: 'card'
+				}
+			}
+		})
+		.populate({
+			path: 'tickets',
+			populate: {
+				path: 'payment_methods',
+				populate: {
+					path: 'payment_method'
+				}
+			}
+		});
+}
+
+function passwordResetRequest(req, res) {
+	const email = req.body.userEmail;
+	const passwordResetToken = jwt.createPasswordResetToken(email)
+	try {
+		res.status(200).send({ "passwordResetToken": passwordResetToken});
+	}
+	catch (ex) {
+		console.log(ex);
+		res.status(500).send(ex);
+	}
+}
+
+function passwordReset(req, res) {
+	var token = req.body.passwordResetToken;
+	
+	var decryptedToken = jwt.decryptPasswordResetToken(token);
+	var email = decryptedToken.user;
+	var newPassword = req.body.newPassword;
+
+	User.findOne({ email: email.toLowerCase() }).exec((err, userToUpdate) => {
+		if (err) {
+			res.status(500).send({ message: 'Error en la petición login user' });
+		} else {
+			if (!userToUpdate) {
+				res.status(404).send({ message: 'El usuario no existe o es una cuenta de Google o Facebook.' });
+			} else {
+				userToUpdate.password = bcrypt.hashSync(newPassword, null)
+				User.findOneAndUpdate({ "email": email }, userToUpdate, (err, userUpdated) => {
+					if (err) {
+						console.log(err);
+						res.status(500).send({ message: 'Error al actualizar el usuario' });
+					} else {
+						if (!userUpdated) {
+							res.status(404).send({ message: 'No se ha podido actualizar el usuario' });
+						} else {
+							res.status(200).send({
+								user: userUpdated,
+								token: jwt.createToken(userUpdated)
+							});
+						}
+					}
+				})
 			}
 		}
 	})
-	.populate({
-		path: 'tickets',
-		populate: {
-			path: 'payment_methods',
-			populate: {
-				path: 'card'
-			}
-		}
-	})
-	.populate({
-		path: 'tickets',
-		populate: {
-			path: 'payment_methods',
-			populate: {
-				path: 'payment_method'
-			}
-		}
-	});
 }
 
 function deleteUser(req, res) {
@@ -414,7 +463,7 @@ function deleteUser(req, res) {
 		} else {
 			if (!res) {
 				console.log('No hay tickets asociados alusuario con id:' + userId);
-				res.status(404).send({message: 'No hay tickets asociados alusuario con id:'+userId});
+				res.status(404).send({ message: 'No hay tickets asociados alusuario con id:' + userId });
 			} else {
 				console.log('Borrado de tickets del usuario ' + userId + ' OK');
 			}
@@ -427,7 +476,7 @@ function deleteUser(req, res) {
 		} else {
 			if (!res) {
 				console.log('No hay comentarios asociados al usuario con id:' + userId);
-				res.status(404).send({message: 'No hay comentarios asociados al usuario con id:'+userId});
+				res.status(404).send({ message: 'No hay comentarios asociados al usuario con id:' + userId });
 			} else {
 				console.log('Borrado de comentarios del usuario ' + userId + ' OK.');
 			}
@@ -452,5 +501,7 @@ module.exports = {
 	updateUser,
 	deleteUser,
 	loginUser,
-	getClientTicket
+	getClientTicket,
+	passwordResetRequest,
+	passwordReset
 };

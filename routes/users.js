@@ -12,5 +12,7 @@ api.put('/users/:id', md_auth.ensureAuth, UsersController.updateUser);
 api.delete('/users/:id', md_auth.ensureAuth, UsersController.deleteUser);
 api.post('/login', UsersController.loginUser);
 api.get('/users/ticket/:ticketId', md_auth.ensureAuth, UsersController.getClientTicket);
+api.post('/users/passwordResetRequest', UsersController.passwordResetRequest);
+api.post('/users/passwordReset', md_auth.ensureAuth, UsersController.passwordReset);
 
 module.exports = api;
