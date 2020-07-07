@@ -4,10 +4,8 @@ var jwt = require('../services/jwt');
 var bcrypt = require('bcrypt-nodejs');
 var Ticket = require('../models/tickets');
 var Comment = require('../models/comments');
-var sgMail = require('@sendgrid/mail');
 var Role = require('../models/roles');
-var makeRandomString = require('../utils/randomUtils');
-const randomUtils = require('../utils/randomUtils');
+const RandomUtils = require('../utils/randomUtils');
 
 
 function recUser(user, res) {
@@ -112,7 +110,7 @@ async function saveUser(req, res) {
 								res.status(400).send({ message: 'Introduce la contraseña' });
 							}
 							else {
-								bcrypt.hash(makeRandomString(user.email.length), null, null, function (err, hash) {
+								bcrypt.hash(RandomUtils.makeRandomString(user.email.length), null, null, function (err, hash) {
 									user.password = hash;
 								})
 							}
