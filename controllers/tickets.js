@@ -1,6 +1,6 @@
 'use strict'
 var Ticket = require('../models/tickets');
-var randomUtils = require('../utils/randomUtils');
+var RandomUtils = require('../utils/randomUtils');
 
 
 function getTicket(req, res) {
@@ -121,7 +121,7 @@ function saveTicket(req, res) {
 	})
 	ticket.place = params.place;
 	ticket.total = params.total;
-	ticket.unique_code = randomUtils.makeUniqueCode(4);
+	ticket.unique_code = RandomUtils.makeUniqueCode(4);
 	
 
 	ticket.save((err, ticketStored) => {
