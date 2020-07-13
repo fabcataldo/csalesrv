@@ -16,6 +16,7 @@ function savePlace(req, res){
 	place.lng = params.lng;
 	place.tickets = params.tickets;
 	place.comments = params.comments;
+	place.social_media_urls = params.social_media_urls;
 	params.customer_service_days.forEach(function(item){
 		place.customer_service_days.push(item);
 	})

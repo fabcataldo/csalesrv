@@ -9,6 +9,7 @@ var PlacesSchema = Schema({
 	lng: Number,
 	tickets: [{type: Schema.ObjectId, ref: 'Tickets'}],
 	comments: [{type: Schema.ObjectId, ref: 'Comments'}],
+	social_media_urls: [{type: Schema.Types.String}],
 	customer_service_days: [Number]
 });
 
