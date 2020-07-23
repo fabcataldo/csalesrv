@@ -1,0 +1,4 @@
+{"_id":{"$oid":"5e6d34c9bd3b981b0e9e6799"},"privileges":[{"$oid":"5e6d3478bd3b981b0e9e6797"},{"$oid":"5e6d3495bd3b981b0e9e6798"}],"name":"dueño","__v":{"$numberInt":"0"}}
+{"_id":{"$oid":"5e6d3538bd3b981b0e9e679b"},"privileges":[{"$oid":"5e6d351abd3b981b0e9e679a"}],"name":"cliente","__v":{"$numberInt":"0"}}
+{"_id":{"$oid":"5eb6bf158224ab1587547d2f"},"privileges":[{"$oid":"5eb6be358224ab1587547d2d"},{"$oid":"5eb6be418224ab1587547d2e"}],"name":"empleado","__v":{"$numberInt":"0"}}
+{"_id":{"$oid":"5eb6bf338224ab1587547d30"},"privileges":[{"$oid":"5eb6bde78224ab1587547d2b"},{"$oid":"5eb6bdf98224ab1587547d2c"}],"name":"socio","__v":{"$numberInt":"0"}}

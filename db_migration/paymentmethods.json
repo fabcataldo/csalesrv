@@ -1,0 +1,2 @@
+{"_id":{"$oid":"5f10a4b17f8a1e3e602d5a62"},"payment_method":{"$oid":"5e975fb1d99fb92a0e91e19c"},"amount_paid":{"$numberInt":"850"},"__v":{"$numberInt":"0"}}
+{"_id":{"$oid":"5f10a5757f8a1e3e602d5a66"},"payment_method":{"$oid":"5e975fb1d99fb92a0e91e19c"},"amount_paid":{"$numberInt":"850"},"__v":{"$numberInt":"0"}}

@@ -1,0 +1,7 @@
+{"_id":{"$oid":"5e6d3478bd3b981b0e9e6797"},"name":"Privilegio dueño 1","description":"Baja, modificación y consulta de sus propios datos","__v":{"$numberInt":"0"}}
+{"_id":{"$oid":"5e6d3495bd3b981b0e9e6798"},"name":"Privilegio dueño 2","description":"Gestión completa de datos de todos los usuarios","__v":{"$numberInt":"0"}}
+{"_id":{"$oid":"5e6d351abd3b981b0e9e679a"},"name":"Privilegio cliente 1","description":"Baja, modificación y consulta de sus propios datos","__v":{"$numberInt":"0"}}
+{"_id":{"$oid":"5eb6bde78224ab1587547d2b"},"name":"Privilegio socio1","description":"Gestión completa de datos de todos los usuarios","__v":{"$numberInt":"0"}}
+{"_id":{"$oid":"5eb6bdf98224ab1587547d2c"},"name":"Privilegio socio 2","description":"Baja, modificación y consulta de sus propios datos","__v":{"$numberInt":"0"}}
+{"_id":{"$oid":"5eb6be358224ab1587547d2d"},"name":"Privilegio empleado 1","description":"Modificación y consulta de sus propios datos","__v":{"$numberInt":"0"}}
+{"_id":{"$oid":"5eb6be418224ab1587547d2e"},"name":"Privilegio empleado 2","description":"Consulta de tickets","__v":{"$numberInt":"0"}}
