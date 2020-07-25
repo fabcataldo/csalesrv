@@ -3,8 +3,15 @@
 var express = require('express');
 var bodyParser = require('body-parser');
 var cors = require('cors')
-
+const mercadopago = require('mercadopago');
+const config = require('./private_resources/config');
 var app = express();
+
+mercadopago.configure({
+    client_id: config.client_id,
+    client_secret: config.client_secret
+});
+mercadopago.configurations.setAccessToken("TEST-4810749615636979-022920-32ef3bbc2b8d5497662fe21661515b92-233164701");
 
 // cargar rutas
 var users_routes = require('./routes/users');

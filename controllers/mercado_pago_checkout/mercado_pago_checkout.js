@@ -1,15 +1,7 @@
 'use strict'
 const mercadopago = require('mercadopago');
-const config = require('../../private_resources/config');
-
 
 function mercadoPagoPayment(req, res) {
-  mercadopago.configure({
-    client_id: config.client_id,
-    client_secret: config.client_secret
-  });
-
-  mercadopago.configurations.setAccessToken("TEST-4810749615636979-022920-32ef3bbc2b8d5497662fe21661515b92-233164701");
   if(req.body.payment_type == 'card'){
     customer_data = { "email": req.body.email }
 

@@ -8,7 +8,6 @@ mongoose.Promise = global.Promise;
 
 //mongoose.connect('mongodb://localhost:27017/csaledb', {useNewUrlParser:true}, (err, res) => {
 mongoose.connect('mongodb://fabio1010:colo2020@ds119052.mlab.com:19052/heroku_3b3jcrqp', {useNewUrlParser:true}, (err, res) => {
-	
 	if(err){
 		throw err;
 	}else{
