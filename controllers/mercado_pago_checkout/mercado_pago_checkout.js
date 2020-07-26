@@ -3,7 +3,8 @@ const mercadopago = require('mercadopago');
 
 function mercadoPagoPayment(req, res) {
   if(req.body.payment_type == 'card'){
-    mercadopago.customers.create(JSON.stringify({ "email": req.body.email })).then(function (customer) {
+    let body = { "email": req.body.email }
+    mercadopago.customers.create(body.then(function (customer) {
       card_data = {
         "token": req.body.token,
         "customer": customer.id
