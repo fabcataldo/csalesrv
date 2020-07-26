@@ -3,8 +3,21 @@ const mercadopago = require('mercadopago');
 
 function mercadoPagoPayment(req, res) {
   if(req.body.payment_type == 'card'){
-    let body = { "email": req.body.email }
-    mercadopago.customers.create(body).then(function (customer) {
+    let customer = {
+      email: req.body.payer_email,
+      /*
+      first_name: req.body.first_name,
+      last_name : req.body.last_name,
+      phone:{
+        area_code:"023",
+        number:"12345678"
+      },
+      identification:req.body.identification,
+      description:req.body.customer_description,
+      address:req.body.address
+      */
+    }
+    mercadopago.customers.create(customer).then(function (customer) {
       card_data = {
         "token": req.body.token,
         "customer": customer.id
@@ -18,7 +31,7 @@ function mercadoPagoPayment(req, res) {
           installments: 1,
           payment_method_id: card.payment_method.id,
           payer: {
-            email: req.body.email
+            email: req.body.payer_email
           }
         };
         if(card.payment_method.name.includes("master")){
