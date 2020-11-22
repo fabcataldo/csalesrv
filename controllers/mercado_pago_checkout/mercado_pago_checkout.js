@@ -63,7 +63,7 @@ function mercadoPagoPayment(req, res) {
       description: req.body.description,
       payment_method_id: req.body.payment_method_id,
       payer: {
-        email: 'test_user_75767751@testuser.com'
+        email: 'test_user_10166127@testuser.com'
       }
     };
     mercadopago.payment.save(payment_data).then(function (data) {
