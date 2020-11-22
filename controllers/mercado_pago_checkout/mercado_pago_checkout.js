@@ -34,7 +34,7 @@ function mercadoPagoPayment(req, res) {
             email: req.body.payer_email
           }
         };
-        if(card.payment_method.name.includes("master")){
+        if(card.payment_method.name.includes("visa")){
           payment_data.issuer_id = card.issuer.id;
         }
     
@@ -66,8 +66,6 @@ function mercadoPagoPayment(req, res) {
         email: 'test_user_10166127@testuser.com'
       }
     };
-    console.log('payment_Data')
-    console.log(payment_data)
     mercadopago.payment.save(payment_data).then(function (data) {
       res.status(200).send(data)
     }).catch(function (error) {
